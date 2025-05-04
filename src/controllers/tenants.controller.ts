@@ -3,7 +3,6 @@ import logger from "../utils/logger";
 import supabase from "../config/supabase";
 import argon2 from "argon2";
 import { v4 as uuidv4 } from "uuid";
-import cryptoJs from "crypto";
 
 export const registerTenant = async (req: Request, res: Response) => {
   logger.info("Tenant register endpoint hit");
