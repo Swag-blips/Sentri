@@ -6,7 +6,7 @@ import { registerTenant } from "../controllers/tenants.controller";
 const router = Router();
 
 router.post(
-  "/api/register",
+  "/register",
   validateRequest(registerTenantSchema),
   registerTenant
 );
