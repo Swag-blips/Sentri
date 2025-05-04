@@ -11,12 +11,6 @@ dotenv.config();
 const port = process.env.PORT || 3000;
 const app = express();
 
-const supabase = createClient(
-  process.env.SUPABASE_URL as string,
-  process.env.SUPABASE_API_KEY as string
-);
-
-
 app.use(helmet());
 app.use(logRequests);
 app.use(errorHandler);
