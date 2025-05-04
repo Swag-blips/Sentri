@@ -1,11 +1,15 @@
 import { Router } from "express";
+import validateRequest from "../middleware/validateSchema";
+import { registerTenantSchema } from "../utils/validator";
+import { registerTenant } from "../controllers/tenants.controller";
 
 const router = Router();
 
-router.post("/healthCheck", (req, res) => {
-  res.status(200).json({ success: true, message: "Health check succesfully" });
-  return;
-});
+router.post(
+  "/api/register",
+  validateRequest(registerTenantSchema),
+  registerTenant
+);
 // router.get("/:id");
 // router.get("/all");
 // router.put("/:id");
