@@ -5,12 +5,8 @@ import { registerTenant } from "../controllers/tenants.controller";
 
 const router = Router();
 
-router.post(
-  "/register",
-  validateRequest(registerTenantSchema),
-  registerTenant
-);
-// router.get("/:id");
+router.post("/register", validateRequest(registerTenantSchema), registerTenant);
+router.get("/:id", registerTenant);
 // router.get("/all");
 // router.put("/:id");
 // router.delete("/:id");

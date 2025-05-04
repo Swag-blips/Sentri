@@ -35,7 +35,7 @@ export const registerTenant = async (req: Request, res: Response) => {
       name,
       password: hashedPassord,
       apiKey: generatedApiKey,
-      "tenant-id": tenantId,
+      tenantId,
     })) as any;
 
     if (userError) {
