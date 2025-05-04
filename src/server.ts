@@ -1,22 +1,26 @@
 import express from "express";
 import dotenv from "dotenv";
-import { createClient } from "@supabase/supabase-js";
 import helmet from "helmet";
 import logRequests from "./middleware/logRequests";
 import errorHandler from "./utils/errorHandler";
 import logger from "./utils/logger";
+import tenantRoutes from "./routes/tenants.routes";
 
 dotenv.config();
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 const app = express();
+
+app.use(express.json());
 
 app.use(helmet());
 app.use(logRequests);
 app.use(errorHandler);
 
+app.use("/api/tenants", tenantRoutes);
+
 app.listen(port, () => {
-  logger.info(`server is running on port ${port}`);
+  logger.info(`Server is running on port ${port}`);
 });
 
 process.on("uncaughtException", (err) => {
