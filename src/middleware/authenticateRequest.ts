@@ -24,6 +24,10 @@ const authenticateRequest = async (
       .eq("tenantId", tenantId)
       .single();
 
+    if (tenant?.error && tenant?.error.code === "PGRST116") {
+      res.status(404).json({ success: false, message: "Tenant not found" });
+    }
+
     if (tenant?.error) {
       res.status(400).json({ success: false, error: tenant.error });
       return;

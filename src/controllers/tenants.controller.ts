@@ -64,7 +64,7 @@ export const getTenant = async (req: Request, res: Response) => {
 
     const tenant = await supabase
       ?.from("Tenants")
-      .select()
+      .select("id, name, email")
       .eq("tenantId", tenantId)
       .limit(1)
       .single();
@@ -84,9 +84,9 @@ export const getTenant = async (req: Request, res: Response) => {
     }
 
     res.status(200).json({ success: true, tenant: tenant.data });
-    return
+    return;
   } catch (error) {
     logger.error(error);
     res.status(500).json({ message: error });
-  } 
+  }
 };
