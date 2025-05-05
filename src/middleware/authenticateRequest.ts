@@ -19,13 +19,15 @@ const authenticateRequest = async (
 
     const tenant = await supabase
       ?.from("Tenants")
-      .select()
+      .select("tenantId")
       .limit(1)
       .eq("tenantId", tenantId)
       .single();
 
     if (tenant?.error && tenant?.error.code === "PGRST116") {
       res.status(404).json({ success: false, message: "Tenant not found" });
+
+      return;
     }
 
     if (tenant?.error) {
@@ -33,7 +35,7 @@ const authenticateRequest = async (
       return;
     }
 
-    if (!tenant) {
+    if (!tenant?.data) {
       res.status(404).json({ success: false, message: "Tenant not found" });
       return;
     }
@@ -43,6 +45,7 @@ const authenticateRequest = async (
     next();
   } catch (error) {
     logger.error(error);
+    res.status(500).json({ success: false, message: error });
   }
 };
 

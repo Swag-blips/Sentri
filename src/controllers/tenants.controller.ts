@@ -60,7 +60,7 @@ export const registerTenant = async (req: Request, res: Response) => {
 
 export const getTenant = async (req: Request, res: Response) => {
   try {
-    const tenantId = req.tenantId;
+    const { id: tenantId } = req.params;
 
     const tenant = await supabase
       ?.from("Tenants")
@@ -69,14 +69,18 @@ export const getTenant = async (req: Request, res: Response) => {
       .limit(1)
       .single();
 
-    if (tenant?.error) {
-      res
-        .status(400)
-        .json({ success: false, message: `an error occured ${tenant.error}` });
+    if (tenant?.error && tenant?.error.code === "PGRST116") {
+      res.status(404).json({ success: false, message: "Tenant not found" });
+
       return;
     }
 
-    if (!tenant) {
+    if (tenant?.error) {
+      res.status(400).json({ success: false, error: tenant.error });
+      return;
+    }
+
+    if (!tenant?.data) {
       res
         .status(404)
         .json({ success: false, message: "Tenant does not exist" });
