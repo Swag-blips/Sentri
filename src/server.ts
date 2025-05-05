@@ -9,7 +9,6 @@ import { ConvexHttpClient } from "convex/browser";
 
 dotenv.config();
 
-const client = new ConvexHttpClient(process.env.CONVEX_URl as string);
 const port = process.env.PORT || 5000;
 const app = express();
 
