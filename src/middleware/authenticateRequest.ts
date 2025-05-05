@@ -21,7 +21,7 @@ const authenticateRequest = async (
       ?.from("Tenants")
       .select()
       .limit(1)
-      .eq("tenant-id", tenantId)
+      .eq("tenantId", tenantId)
       .single();
 
     if (tenant?.error) {
@@ -30,7 +30,7 @@ const authenticateRequest = async (
     }
 
     if (!tenant) {
-      res.status(404).json({ success: false, message: "Tenant not foun" });
+      res.status(404).json({ success: false, message: "Tenant not found" });
       return;
     }
 
@@ -41,3 +41,5 @@ const authenticateRequest = async (
     logger.error(error);
   }
 };
+
+export default authenticateRequest;

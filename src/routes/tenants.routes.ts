@@ -1,12 +1,13 @@
 import { Router } from "express";
 import validateRequest from "../middleware/validateSchema";
 import { registerTenantSchema } from "../utils/validator";
-import { registerTenant } from "../controllers/tenants.controller";
+import { getTenant, registerTenant } from "../controllers/tenants.controller";
+import authenticateRequest from "../middleware/authenticateRequest";
 
 const router = Router();
 
 router.post("/register", validateRequest(registerTenantSchema), registerTenant);
-router.get("/:id", registerTenant);
+router.get("/", authenticateRequest, getTenant);
 // router.get("/all");
 // router.put("/:id");
 // router.delete("/:id");
