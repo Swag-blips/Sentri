@@ -5,16 +5,20 @@ import { v4 as uuid } from "uuid";
 import api from "../../convex/_generated/api";
 import argon2 from "argon2";
 import CryptoJS from "crypto-js";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from "../utils/generateToken";
 
 export const registerTenant = async (req: Request, res: Response) => {
   try {
     const { name, password, email } = req.body;
 
-    const existingUser = await convexClient?.query(api.api.tenant.getTenant, {
+    const user = await convexClient?.query(api.api.tenant.getTenant, {
       email,
     });
 
-    if (existingUser) {
+    if (user) {
       res
         .status(409)
         .json({ success: false, message: "Tenant already exists" });
@@ -29,16 +33,66 @@ export const registerTenant = async (req: Request, res: Response) => {
     ).toString();
 
     const tenantId = uuid();
-    const tenant = await convexClient?.mutation(api.api.tenant.storeTenant, {
+    const tenant = (await convexClient?.mutation(api.api.tenant.storeTenant, {
       name,
       email,
       password: hashedPassword,
       tenantId,
       apiKey,
+    })) as string;
+
+    const accessToken = generateAccessToken(tenant, tenantId);
+    const refreshToken = generateRefreshToken(tenant, tenantId);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        accessToken,
+        refreshToken,
+        tenant,
+      },
+    });
+    return;
+  } catch (error) {
+    logger.error(error);
+    res.status(500).json({ message: "internal server error" });
+  }
+};
+
+export const loginTenant = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await convexClient?.query(api.api.tenant.getTenant, {
+      email,
     });
 
-    res.status(200).json({ success: true, message: tenant });
-    return;
+    if (!user) {
+      res.status(400).json({ success: false, message: "Invalid credentials" });
+      return;
+    }
+
+    const verifyPassword = await argon2.verify(user.password, password);
+
+    if (!verifyPassword) {
+      res.status(400).json({ success: false, message: "invalid credentials" });
+      return;
+    }
+
+    const accessToken = generateAccessToken(user._id, user.tenantId);
+
+    const refreshToken = generateRefreshToken(user._id, user.tenantId);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        _id: user._id,
+        email: user.email,
+        name: user.name,
+        refreshToken,
+        accessToken,
+      },
+    });
   } catch (error) {
     logger.error(error);
     res.status(500).json({ message: "internal server error" });

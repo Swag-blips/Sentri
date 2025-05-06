@@ -1,11 +1,12 @@
 import { Router } from "express";
 import validateRequest from "../middleware/validateSchema";
-import { registerTenantSchema } from "../utils/validator";
-import { registerTenant } from "../controllers/tenants.controller";
+import { loginTenantSchema, registerTenantSchema } from "../utils/validator";
+import { loginTenant, registerTenant } from "../controllers/tenants.controller";
 
 const router = Router();
 
 router.post("/register", validateRequest(registerTenantSchema), registerTenant);
+router.post("/login", validateRequest(loginTenantSchema), loginTenant);
 // router.get("/:id", getTenant);
 
 // router.get("/all");
