@@ -1,4 +1,7 @@
 import { ConvexHttpClient } from "convex/browser";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 let convexClient: ConvexHttpClient | null = null;
 
