@@ -5,7 +5,7 @@ import logRequests from "./middleware/logRequests";
 import errorHandler from "./utils/errorHandler";
 import logger from "./utils/logger";
 import tenantRoutes from "./routes/tenants.routes";
-import { ConvexHttpClient } from "convex/browser";
+
 
 dotenv.config();
 
