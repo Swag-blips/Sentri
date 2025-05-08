@@ -98,3 +98,5 @@ export const loginTenant = async (req: Request, res: Response) => {
     res.status(500).json({ message: "internal server error" });
   }
 };
+
+export const getMe = () => {};
