@@ -27,7 +27,7 @@ const authenticateRequest = async (
 
     if (decodedToken) {
       req.tenantId = decodedToken.tenantId;
-      next();
+      next();  
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -38,8 +38,8 @@ const authenticateRequest = async (
         res.status(500).json({ message: error });
         logger.error(error);
         return;
-      }
-    }
+      } 
+    } 
   }
 };
 

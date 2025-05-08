@@ -30,6 +30,21 @@ export const storeTenant = mutation({
       tenantId: args.tenantId,
     });
 
-    return tenant
+    return tenant;
+  },
+});
+
+export const getTenantMe = query({
+  args: {
+    tenantId: v.string(),
+  },
+
+  handler: async (ctx, args) => {
+    const tenant = await ctx.db
+      .query("tenants")
+      .withIndex("by_tenantId", (q) => q.eq("tenantId", args.tenantId))
+      .unique();
+
+    return tenant;
   },
 });

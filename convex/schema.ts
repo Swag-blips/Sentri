@@ -8,5 +8,7 @@ export default defineSchema({
     password: v.string(),
     tenantId: v.string(),
     apiKey: v.string(),
-  }).index("by_email", ["email", "tenantId"]),
+  })
+    .index("by_email", ["email"])
+    .index("by_tenantId", ["tenantId"]),
 });

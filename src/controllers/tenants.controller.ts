@@ -99,4 +99,28 @@ export const loginTenant = async (req: Request, res: Response) => {
   }
 };
 
-export const getMe = () => {};
+export const getMe = async (req: Request, res: Response) => {
+  try {
+    const tenantId = req.tenantId;
+
+    const tenant = await convexClient?.query(api.api.tenant.getTenantMe, {
+      tenantId,
+    });
+
+    if (!tenant) {
+      res.status(404).json({ success: false, message: "Tenant not found" });
+      return;
+    }
+
+    if (tenant.tenantId !== tenantId) {
+      res.status(401).json({ success: false, messsage: "unautorized access" });
+      return;
+    }
+
+    res.status(200).json({ success: true, data: tenant });
+    return;
+  } catch (error) {
+    logger.error(error);
+    res.status(500).json({ success: false, message: error });
+  }
+};

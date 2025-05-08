@@ -6,12 +6,13 @@ import {
   loginTenant,
   registerTenant,
 } from "../controllers/tenants.controller";
+import authenticateRequest from "../middleware/authenticateRequest";
 
 const router = Router();
 
 router.post("/register", validateRequest(registerTenantSchema), registerTenant);
 router.post("/login", validateRequest(loginTenantSchema), loginTenant);
-router.get("/me", getMe);
+router.get("/me", authenticateRequest, getMe);
 
 // router.get("/all");
 // router.put("/:id");
