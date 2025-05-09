@@ -20,8 +20,8 @@ router.post("/login", validateRequest(loginTenantSchema), loginTenant);
 router.get("/me", authenticateRequest, getMe);
 router.put(
   "/me",
-  authenticateRequest,
   validateRequest(updateTenatSchema),
+  authenticateRequest,
   updateMe
 );
 

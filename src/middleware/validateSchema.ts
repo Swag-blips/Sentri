@@ -5,7 +5,7 @@ import logger from "../utils/logger";
 const validateRequest =
   (schema: ObjectSchema) =>
   (req: Request, res: Response, next: NextFunction) => {
-    const { error } = schema.validate(req.body, { abortEarly: false });
+    const { error } = schema.validate(req.body, { abortEarly: true });
 
     if (error) {
       res.status(400).json({

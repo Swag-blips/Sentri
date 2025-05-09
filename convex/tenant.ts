@@ -52,14 +52,17 @@ export const getTenantMe = query({
 export const updateTenant = mutation({
   args: {
     id: v.id("tenants"),
-    name: v.optional(v.string()),
-    email: v.optional(v.string()),
+    name: v.string(),
+    email: v.string(),
   },
   handler: async (ctx, args) => {
-    const { id } = args;
+    const { id, name, email } = args;
 
-    await ctx.db.patch(id, {
-      
+    const newUser = await ctx.db.patch(id, {
+      name,
+      email,
     });
+
+    return newUser;
   },
 });
