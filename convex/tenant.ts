@@ -48,3 +48,18 @@ export const getTenantMe = query({
     return tenant;
   },
 });
+
+export const updateTenant = mutation({
+  args: {
+    id: v.id("tenants"),
+    name: v.optional(v.string()),
+    email: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const { id } = args;
+
+    await ctx.db.patch(id, {
+      
+    });
+  },
+});

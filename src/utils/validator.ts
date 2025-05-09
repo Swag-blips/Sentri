@@ -10,3 +10,8 @@ export const loginTenantSchema = Joi.object({
   email: Joi.string().required().max(254),
   password: Joi.string().min(6).required(),
 });
+
+export const updateTenatSchema = Joi.object({
+  email: Joi.string().required().max(254),
+  name: Joi.string().required().max(100),
+});

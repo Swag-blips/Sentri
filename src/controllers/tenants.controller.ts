@@ -124,3 +124,40 @@ export const getMe = async (req: Request, res: Response) => {
     res.status(500).json({ success: false, message: error });
   }
 };
+
+export const updateMe = async (req: Request, res: Response) => {
+  try {
+    const tenantId = req.tenantId;
+    const { name, email } = req.body;
+
+    const tenant = await convexClient?.query(api.api.tenant.getTenantMe, {
+      tenantId,
+    });
+
+    if (!tenant) {
+      res.status(404).json({
+        success: false,
+        message: "Tenant not found",
+      });
+      return;
+    }
+
+    if (tenant.tenantId !== tenantId) {
+      res.status(401).json({ success: false, message: "Unauthorized access" });
+      return;
+    }
+
+    await convexClient?.mutation(api.api.tenant.updateTenant, {
+      id: tenant._id,
+      name: name || tenant.name,
+      email: email || tenant.email,
+    });
+
+    res
+      .status(201)
+      .json({ success: true, message: "Details updated sucessfull" });
+  } catch (error) {
+    logger.error(error);
+    res.status(500).json({ success: false, message: error });
+  }
+};
