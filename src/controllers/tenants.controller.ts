@@ -117,7 +117,15 @@ export const getMe = async (req: Request, res: Response) => {
       return;
     }
 
-    res.status(200).json({ success: true, data: tenant });
+    res.status(200).json({
+      success: true,
+      data: {
+        _id: tenant._id,
+        email: tenant.email,
+        name: tenant.name,
+        tenantId: tenant.tenantId,
+      },
+    });
     return;
   } catch (error) {
     logger.error(error);

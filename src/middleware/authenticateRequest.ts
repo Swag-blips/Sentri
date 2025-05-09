@@ -27,19 +27,21 @@ const authenticateRequest = async (
 
     if (decodedToken) {
       req.tenantId = decodedToken.tenantId;
-      next();  
+      next();
     }
   } catch (error) {
     if (error instanceof Error) {
       if (error.name === "TokenExpiredError") {
         res.status(401).json({ success: false, message: "Token has expired" });
         return;
+      } else if (error.name === "JsonWebTokenError") {
+        res.status(401).json({ success: false, message: "invalid Jwt" });
       } else {
         res.status(500).json({ message: error });
         logger.error(error);
         return;
-      } 
-    } 
+      }
+    }
   }
 };
 
