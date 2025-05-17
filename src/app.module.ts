@@ -1,7 +1,8 @@
-import { Module } from '@nestjs/common';
+import { Module } from '@nestjs/common'; 
+import { OwnerModule } from './owner/owner.module';
 
 @Module({
-  imports: [],
+  imports: [OwnerModule],
   controllers: [],
   providers: [],
 })
