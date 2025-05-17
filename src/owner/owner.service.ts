@@ -7,7 +7,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Owner } from './schema/owner.schema';
 import { Model } from 'mongoose';
-import { createOwnerDto } from './dto/owner.dto';
+import { createOwnerDto, LoginDto } from './dto/owner.dto';
 import * as argon2 from 'argon2';
 
 @Injectable()
@@ -42,6 +42,22 @@ export class OwnerService {
     };
   }
 
+  async loginOwnerAccount(loginDto: LoginDto) {
+    const { email, password } = loginDto;
+    const ownerAccount = await this.getOwner(email);
+
+    if (!ownerAccount) {
+      throw new NotFoundException('Owner account not found');
+    }
+
+    const verifyPassword = await argon2.verify(ownerAccount.password, password);
+
+    if (!verifyPassword) {
+      throw new UnauthorizedException('invalid xredentials');
+    }
+
+    
+  }
   private getOwner(email: string) {
     const owner = this.ownerModel.findOne({
       email,
