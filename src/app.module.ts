@@ -3,6 +3,7 @@ import { OwnerModule } from './owner/owner.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TenantsModule } from './tenants/tenants.module';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     OwnerModule,
@@ -12,6 +13,7 @@ import { TenantsModule } from './tenants/tenants.module';
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI as string),
     TenantsModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
