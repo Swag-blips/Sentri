@@ -4,18 +4,15 @@ import { OwnerService } from './owner.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ownerSchema } from 'src/owner/schema/owner.schema';
 import { JwtModule } from '@nestjs/jwt';
+import { AccessTokenStrategy } from './strategies/accessToken.strategy';
+import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'Owner', schema: ownerSchema }]),
-    JwtModule.register({
-      secret: process.env.OWNER_SECRET_KEY,
-      signOptions: {
-        expiresIn: '30d',
-      },
-    }),
+    JwtModule.register({}),
   ],
   controllers: [OwnerController],
-  providers: [OwnerService],
+  providers: [OwnerService, AccessTokenStrategy, RefreshTokenStrategy],
 })
 export class OwnerModule {}

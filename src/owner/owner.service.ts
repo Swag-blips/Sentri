@@ -2,18 +2,24 @@ import {
   Injectable,
   Logger,
   NotFoundException,
+  Request,
+  Res,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Owner } from './schema/owner.schema';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { createOwnerDto, LoginDto } from './dto/owner.dto';
 import * as argon2 from 'argon2';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class OwnerService {
   private readonly logger = new Logger();
-  constructor(@InjectModel(Owner.name) private ownerModel: Model<Owner>) {}
+  constructor(
+    @InjectModel(Owner.name) private ownerModel: Model<Owner>,
+    private jwtService: JwtService,
+  ) {}
 
   async createOwnerAccount(ownerDto: createOwnerDto) {
     const { email, password, orgName } = ownerDto;
@@ -53,10 +59,18 @@ export class OwnerService {
     const verifyPassword = await argon2.verify(ownerAccount.password, password);
 
     if (!verifyPassword) {
-      throw new UnauthorizedException('invalid xredentials');
+      throw new UnauthorizedException('invalid credentials');
     }
 
-    
+    const { accessToken, refreshToken } = await this.generateTokens(
+      ownerAccount._id,
+      ownerAccount.orgName,
+    );
+
+    return {
+      accessToken,
+      refreshToken,
+    };
   }
   private getOwner(email: string) {
     const owner = this.ownerModel.findOne({
@@ -68,5 +82,34 @@ export class OwnerService {
     }
 
     return owner;
+  }
+
+  async getTenants(ownerId: mongoose.Types.ObjectId) {}
+
+  async generateTokens(userId: mongoose.Types.ObjectId, orgName: string) {
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(
+        {
+          sub: userId,
+          orgName: orgName,
+        },
+        {
+          secret: process.env.JWT_ACCESS_SECRET,
+          expiresIn: '15m',
+        },
+      ),
+      this.jwtService.signAsync(
+        {
+          sub: userId,
+          orgName,
+        },
+        {
+          secret: process.env.JWT_REFRESH_SECRET,
+          expiresIn: '7d',
+        },
+      ),
+    ]);
+
+    return { accessToken, refreshToken };
   }
 }

@@ -1,6 +1,7 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res } from '@nestjs/common';
 import { OwnerService } from './owner.service';
 import { createOwnerDto, LoginDto } from './dto/owner.dto';
+import { Response } from 'express';
 
 @Controller('owner')
 export class OwnerController {
@@ -14,5 +15,26 @@ export class OwnerController {
   }
 
   @Post('login')
-  async ownerLogin(@Body() dto: LoginDto) {}
+  async ownerLogin(
+    @Body() dto: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const login = await this.ownerService.loginOwnerAccount(dto);
+    const sevenDays = 1000 * 60 * 60 * 24 * 7;
+    const expires = new Date(new Date().valueOf() + sevenDays);
+    const { refreshToken, accessToken } = login;
+    res.cookie('refresh-token', refreshToken, {
+      httpOnly: true,
+      sameSite: 'lax',
+      expires,
+      secure:true
+    });
+
+    return { success: true, message: 'Login successful', accessToken };
+  }
+
+  @Get("tenants")
+  async getTenants(){
+    
+  }
 }
