@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Logger,
+  Param,
   Post,
   Req,
   Res,
@@ -13,6 +14,7 @@ import { createOwnerDto, LoginDto } from './dto/owner.dto';
 import { Request, Response } from 'express';
 import { AccessTokenGuard } from 'src/common/guards/accessToken.guard';
 import { createTenantDto } from 'src/tenants/dto/tenant.dto';
+import mongoose from 'mongoose';
 
 @Controller('owner')
 export class OwnerController {
@@ -61,5 +63,14 @@ export class OwnerController {
     );
 
     return createTenant;
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Get('tenants/:id')
+  async getTenant(
+    @Req() req: Request,
+    @Param('Id') id: mongoose.Types.ObjectId,
+  ) {
+    const tenant = this.ownerService.getTenantById(req.user!['sub'], id);
   }
 }

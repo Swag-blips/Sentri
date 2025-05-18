@@ -77,17 +77,6 @@ export class OwnerService {
       refreshToken,
     };
   }
-  private getOwner(email: string) {
-    const owner = this.ownerModel.findOne({
-      email,
-    });
-
-    if (!owner) {
-      throw new NotFoundException('owner not found');
-    }
-
-    return owner;
-  }
 
   async getTenants(ownerId: mongoose.Types.ObjectId) {
     const tenants = await this.tenantModel.find({
@@ -104,6 +93,11 @@ export class OwnerService {
   async createTenant(ownerId: mongoose.Types.ObjectId, dto: createTenantDto) {
     const { name } = dto;
     const existingTenant = await this.getOwnerTenant(ownerId, name);
+    const owner = await this.ownerModel.findById(ownerId);
+
+    if (!owner) {
+      throw new NotFoundException('Owner does not exist');
+    }
 
     if (existingTenant) {
       throw new BadRequestException('Tenant already exists in your account');
@@ -117,6 +111,10 @@ export class OwnerService {
       ownerId,
     });
 
+    owner?.tenants.push(tenant._id);
+
+    await owner?.save();
+
     return {
       success: true,
       message: 'Tenant successfully created',
@@ -125,6 +123,23 @@ export class OwnerService {
         id: tenant._id,
       },
     };
+  }
+
+  async getTenantById(
+    ownerId: mongoose.Types.ObjectId,
+    tenantId: mongoose.Types.ObjectId,
+  ) {
+    const tenant = await this.tenantModel.findById(tenantId);
+
+    if (!tenant) {
+      throw new NotFoundException('tenant not found');
+    }
+
+    if (ownerId.toString() !== tenant.ownerId.toString()) {
+      throw new UnauthorizedException('Cannot access this data');
+    }
+
+    return { success: true, data: tenant };
   }
 
   async generateTokens(userId: mongoose.Types.ObjectId, orgName: string) {
@@ -161,5 +176,16 @@ export class OwnerService {
     });
 
     return tenant;
+  }
+  private getOwner(email: string) {
+    const owner = this.ownerModel.findOne({
+      email,
+    });
+
+    if (!owner) {
+      throw new NotFoundException('owner not found');
+    }
+
+    return owner;
   }
 }
