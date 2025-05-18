@@ -12,12 +12,15 @@ import mongoose, { Model } from 'mongoose';
 import { createOwnerDto, LoginDto } from './dto/owner.dto';
 import * as argon2 from 'argon2';
 import { JwtService } from '@nestjs/jwt';
+import { Tenant } from 'src/tenants/schema/tenant.schema';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class OwnerService {
   private readonly logger = new Logger();
   constructor(
     @InjectModel(Owner.name) private ownerModel: Model<Owner>,
+    @InjectModel(Tenant.name) private tenantModel: Model<Tenant>,
     private jwtService: JwtService,
   ) {}
 
@@ -84,7 +87,21 @@ export class OwnerService {
     return owner;
   }
 
-  async getTenants(ownerId: mongoose.Types.ObjectId) {}
+  async getTenants(ownerId: mongoose.Types.ObjectId) {
+    const tenants = await this.tenantModel.find({
+      ownerId: ownerId,
+    });
+
+    if (!tenants) {
+      return { success: true, tenants: [] };
+    }
+
+    return { success: true, tenants: tenants };
+  }
+
+  async createTenant(ownerId: mongoose.Types.ObjectId) {
+    
+  }
 
   async generateTokens(userId: mongoose.Types.ObjectId, orgName: string) {
     const [accessToken, refreshToken] = await Promise.all([

@@ -1,10 +1,21 @@
-import { Body, Controller, Get, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Logger,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { OwnerService } from './owner.service';
 import { createOwnerDto, LoginDto } from './dto/owner.dto';
-import { Response } from 'express';
+import { Request, Response } from 'express';
+import { AccessTokenGuard } from 'src/common/guards/accessToken.guard';
 
 @Controller('owner')
 export class OwnerController {
+  private readonly logger = new Logger();
   constructor(private ownerService: OwnerService) {}
 
   @Post('signup')
@@ -27,14 +38,16 @@ export class OwnerController {
       httpOnly: true,
       sameSite: 'lax',
       expires,
-      secure:true
+      secure: true,
     });
 
     return { success: true, message: 'Login successful', accessToken };
   }
 
-  @Get("tenants")
-  async getTenants(){
-    
+  @UseGuards(AccessTokenGuard)
+  @Get('tenants')
+  async getTenants(@Req() req: Request) {
+    const tenants = await this.ownerService.getTenants(req.user!['sub']);
+    return tenants;
   }
 }

@@ -10,8 +10,14 @@ export class Tenant {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Owner',
     required: true,
+    index: true,
   })
   ownerId: mongoose.Types.ObjectId;
+  @Prop({
+    required: true,
+    index: true,
+  })
+  tenantId: string;
 
   @Prop({
     required: true,
