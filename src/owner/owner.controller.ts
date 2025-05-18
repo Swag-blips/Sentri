@@ -13,7 +13,7 @@ import { OwnerService } from './owner.service';
 import { createOwnerDto, LoginDto } from './dto/owner.dto';
 import { Request, Response } from 'express';
 import { AccessTokenGuard } from 'src/common/guards/accessToken.guard';
-import { createTenantDto } from 'src/tenants/dto/tenant.dto';
+import { createTenantDto } from 'src/owner/dto/tenant.dto';
 import mongoose from 'mongoose';
 
 @Controller('owner')

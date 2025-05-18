@@ -13,9 +13,9 @@ import mongoose, { Model } from 'mongoose';
 import { createOwnerDto, LoginDto } from './dto/owner.dto';
 import * as argon2 from 'argon2';
 import { JwtService } from '@nestjs/jwt';
-import { Tenant } from 'src/tenants/schema/tenant.schema';
+import { Tenant } from 'src/owner/schema/tenant.schema';
 import { v4 as uuidv4 } from 'uuid';
-import { createTenantDto } from 'src/tenants/dto/tenant.dto';
+import { createTenantDto } from 'src/owner/dto/tenant.dto';
 
 @Injectable()
 export class OwnerService {
