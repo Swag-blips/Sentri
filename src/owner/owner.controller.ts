@@ -12,6 +12,7 @@ import { OwnerService } from './owner.service';
 import { createOwnerDto, LoginDto } from './dto/owner.dto';
 import { Request, Response } from 'express';
 import { AccessTokenGuard } from 'src/common/guards/accessToken.guard';
+import { createTenantDto } from 'src/tenants/dto/tenant.dto';
 
 @Controller('owner')
 export class OwnerController {
@@ -49,5 +50,16 @@ export class OwnerController {
   async getTenants(@Req() req: Request) {
     const tenants = await this.ownerService.getTenants(req.user!['sub']);
     return tenants;
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Post('tenants')
+  async createTenants(@Req() req: Request, @Body() dto: createTenantDto) {
+    const createTenant = await this.ownerService.createTenant(
+      req.user!['sub'],
+      dto,
+    );
+
+    return createTenant;
   }
 }

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   Logger,
   NotFoundException,
@@ -13,7 +14,8 @@ import { createOwnerDto, LoginDto } from './dto/owner.dto';
 import * as argon2 from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { Tenant } from 'src/tenants/schema/tenant.schema';
-import { v4 as uuid } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
+import { createTenantDto } from 'src/tenants/dto/tenant.dto';
 
 @Injectable()
 export class OwnerService {
@@ -96,11 +98,33 @@ export class OwnerService {
       return { success: true, tenants: [] };
     }
 
-    return { success: true, tenants: tenants };
+    return { success: true, data: tenants };
   }
 
-  async createTenant(ownerId: mongoose.Types.ObjectId) {
-    
+  async createTenant(ownerId: mongoose.Types.ObjectId, dto: createTenantDto) {
+    const { name } = dto;
+    const existingTenant = await this.getOwnerTenant(ownerId, name);
+
+    if (existingTenant) {
+      throw new BadRequestException('Tenant already exists in your account');
+    }
+
+    const apiKey = uuidv4();
+
+    const tenant = await this.tenantModel.create({
+      name,
+      apiKey,
+      ownerId,
+    });
+
+    return {
+      success: true,
+      message: 'Tenant successfully created',
+      data: {
+        name,
+        id: tenant._id,
+      },
+    };
   }
 
   async generateTokens(userId: mongoose.Types.ObjectId, orgName: string) {
@@ -128,5 +152,14 @@ export class OwnerService {
     ]);
 
     return { accessToken, refreshToken };
+  }
+
+  private async getOwnerTenant(ownerId: mongoose.Types.ObjectId, name: string) {
+    const tenant = await this.tenantModel.findOne({
+      ownerId: ownerId,
+      name: name,
+    });
+
+    return tenant;
   }
 }

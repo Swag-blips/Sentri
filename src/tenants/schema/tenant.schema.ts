@@ -13,11 +13,6 @@ export class Tenant {
     index: true,
   })
   ownerId: mongoose.Types.ObjectId;
-  @Prop({
-    required: true,
-    index: true,
-  })
-  tenantId: string;
 
   @Prop({
     required: true,
