@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { OwnerModule } from './owner/owner.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { TenantsModule } from './tenants/tenants.module';
 @Module({
   imports: [
     OwnerModule,
@@ -10,6 +11,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       envFilePath: '.env',
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI as string),
+    TenantsModule,
   ],
   controllers: [],
   providers: [],
