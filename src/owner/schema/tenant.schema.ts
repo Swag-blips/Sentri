@@ -14,8 +14,12 @@ export class Tenant {
   })
   ownerId: mongoose.Types.ObjectId;
 
+  @Prop({ required: true, index: true })
+  tenantId: string;
+
   @Prop({
     required: true,
+    index: true,
   })
   apiKey: string;
 }

@@ -104,10 +104,12 @@ export class OwnerService {
     }
 
     const apiKey = uuidv4();
+    const tenantId = uuidv4();
 
     const tenant = await this.tenantModel.create({
       name,
       apiKey,
+      tenantId,
       ownerId,
     });
 

@@ -15,7 +15,6 @@ import { tenantSchema } from 'src/owner/schema/tenant.schema';
     JwtModule.register({}),
   ],
   controllers: [OwnerController],
-
   providers: [OwnerService, AccessTokenStrategy, RefreshTokenStrategy],
 })
 export class OwnerModule {}
