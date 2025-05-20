@@ -1,6 +1,6 @@
 import { IsEmail, IsString, MaxLength, MinLength } from 'class-validator';
 
-export class userSignupDto {
+export class AuthDto {
   @IsEmail()
   @MaxLength(256, { message: 'Email is more than 256 characters' })
   email: string;
